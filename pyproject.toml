@@ -1,0 +1,18 @@
+[project]
+name = "ai-research-assistant"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.139.0",
+    "fastembed>=0.8.0",
+    "groq>=1.5.0",
+    "numpy>=2.5.1",
+    "pydantic>=2.13.4",
+    "pypdf>=6.14.2",
+    "python-dotenv>=1.2.2",
+    "python-multipart>=0.0.32",
+    "qdrant-client>=1.18.0",
+    "uvicorn>=0.51.0",
+]
