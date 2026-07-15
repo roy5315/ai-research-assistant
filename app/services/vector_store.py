@@ -1,3 +1,4 @@
+import os
 from uuid import uuid4
 
 
@@ -10,12 +11,19 @@ from qdrant_client.models import (
 )
 
 
-QDRANT_URL = "http://127.0.0.1:6333"
+QDRANT_URL = os.getenv(
+    "QDRANT_URL",
+    "http://127.0.0.1:6333",
+)
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 COLLECTION_NAME = "research_documents"
 VECTOR_SIZE = 384
 
 
-client = QdrantClient(url=QDRANT_URL)
+client = QdrantClient(
+    url=QDRANT_URL,
+    api_key=QDRANT_API_KEY,
+)
 
 
 def create_collection() -> None:
