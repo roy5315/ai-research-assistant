@@ -4,6 +4,7 @@ from app.api.chat import router as chat_router
 from app.api.documents import router as documents_router
 
 from app.services.vector_store import create_collection
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI(
@@ -12,6 +13,16 @@ app = FastAPI(
     version="0.1.0",
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/health", tags=["Health"])
 def health_check():
