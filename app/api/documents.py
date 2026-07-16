@@ -6,10 +6,6 @@ from app.services.pdf_service import extract_text_from_pdf
 
 from app.services.text_service import chunk_text
 
-from app.services.vector_store import (
-    store_document_chunks,
-    list_documents,
-)
 from app.services.embedding_service import create_embeddings
 from app.services.vector_store import (
     store_document_chunks,
@@ -38,8 +34,9 @@ async def upload_document(file: UploadFile = File(...)):
         )
     file_path = UPLOAD_DIR / file.filename
 
-    content = await file.read()
-    file_path.write_bytes(content)
+    with open(file_path, "wb") as f:
+        while chunk := await file.read(1024 * 1024):  # Read 1 MB at a time
+            f.write(chunk)
 
     extracted_text = extract_text_from_pdf(file_path)
     chunks = chunk_text(extracted_text)

@@ -1,6 +1,10 @@
 import os
 from uuid import uuid4
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 from qdrant_client import QdrantClient
 from qdrant_client import models
@@ -26,10 +30,8 @@ client = QdrantClient(
 )
 
 
-def create_collection() -> None:
-    if not client.collection_exists(
-        collection_name=COLLECTION_NAME
-    ):
+def create_collection():
+    if not client.collection_exists(collection_name=COLLECTION_NAME):
         client.create_collection(
             collection_name=COLLECTION_NAME,
             vectors_config=VectorParams(
@@ -37,6 +39,12 @@ def create_collection() -> None:
                 distance=Distance.COSINE,
             ),
         )
+
+    client.create_payload_index(
+        collection_name=COLLECTION_NAME,
+        field_name="document_id",
+        field_schema="keyword",
+    )
 
 
 def store_document_chunks(
@@ -46,29 +54,36 @@ def store_document_chunks(
 ) -> str:
     document_id = str(uuid4())
 
+    BATCH_SIZE = 50
     points = []
 
-    for index, (chunk, embedding) in enumerate(
-        zip(chunks, embeddings)
-    ):
-        point = PointStruct(
-            id=str(uuid4()),
-            vector=embedding,
-            payload={
-                "text": chunk,
-                "document_id": document_id,
-                "filename": filename,
-                "chunk_index": index,
-            },
+    for index, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
+        points.append(
+            PointStruct(
+                id=str(uuid4()),
+                vector=embedding,
+                payload={
+                    "text": chunk,
+                    "document_id": document_id,
+                    "filename": filename,
+                    "chunk_index": index,
+                 },
+            )
         )
 
-        points.append(point)
+        if len(points) >= BATCH_SIZE:
+           client.upsert(
+            collection_name=COLLECTION_NAME,
+            points=points,
+        )
+        points.clear()
 
-    client.upsert(
+    if points:
+       client.upsert(
         collection_name=COLLECTION_NAME,
         points=points,
-    )
-
+       )  
+   
     return document_id
 
 
@@ -107,14 +122,6 @@ def search_similar_chunks(
             }
         )
 
-    return results
-    def list_documents() -> list[dict]:
-     points, _ = client.scroll(
-        collection_name=COLLECTION_NAME,
-        limit=1000,
-        with_payload=True,
-        with_vectors=False,
-    )
     return results
 
 
