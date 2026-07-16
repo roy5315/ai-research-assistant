@@ -49,15 +49,19 @@ def create_collection():
 
 def store_document_chunks(
     chunks: list[str],
-    embeddings: list[list[float]],
+    embeddings,
     filename: str,
-) -> str:
-    document_id = str(uuid4())
+    document_id: str,
+ ) -> None:
+    
 
     BATCH_SIZE = 50
     points = []
 
-    for index, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
+    embedding_iterator = iter(embeddings)
+
+    for index, chunk in enumerate(chunks):
+        embedding = next(embedding_iterator)
         points.append(
             PointStruct(
                 id=str(uuid4()),
@@ -67,24 +71,24 @@ def store_document_chunks(
                     "document_id": document_id,
                     "filename": filename,
                     "chunk_index": index,
-                 },
+                },
             )
         )
 
         if len(points) >= BATCH_SIZE:
-           client.upsert(
+            client.upsert(
+                collection_name=COLLECTION_NAME,
+                points=points,
+            )
+            points.clear()
+
+    if points:
+        client.upsert(
             collection_name=COLLECTION_NAME,
             points=points,
         )
-        points.clear()
-
-    if points:
-       client.upsert(
-        collection_name=COLLECTION_NAME,
-        points=points,
-       )  
    
-    return document_id
+    
 
 
 def search_similar_chunks(

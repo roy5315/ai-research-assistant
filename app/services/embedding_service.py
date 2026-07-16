@@ -13,15 +13,11 @@ def get_embedding_model() -> TextEmbedding:
     )
 
 
-def create_embeddings(chunks: list[str]) -> list[list[float]]:
+def create_embeddings(chunks: list[str]):
     embedding_model = get_embedding_model()
 
-    embeddings = embedding_model.embed(chunks)
-
-    return [
-        embedding.tolist()
-        for embedding in embeddings
-    ]
+    for embedding in embedding_model.embed(chunks):
+        yield embedding.tolist()
 
 
 def create_query_embedding(query: str) -> list[float]:

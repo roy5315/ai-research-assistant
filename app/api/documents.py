@@ -1,4 +1,5 @@
 from pathlib import Path
+from uuid import uuid4
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
@@ -27,34 +28,52 @@ async def upload_document(file: UploadFile = File(...)):
     existing_documents = list_documents()
 
     for document in existing_documents:
-      if document["filename"] == file.filename:
-        raise HTTPException(
-            status_code=409,
-            detail=f"Document '{file.filename}' already exists",
-        )
+        if document["filename"] == file.filename:
+            raise HTTPException(
+                status_code=409,
+                detail=f"Document '{file.filename}' already exists",
+            )
+
     file_path = UPLOAD_DIR / file.filename
 
     with open(file_path, "wb") as f:
-        while chunk := await file.read(1024 * 1024):  # Read 1 MB at a time
+        while chunk := await file.read(1024 * 1024):
             f.write(chunk)
 
     extracted_text = extract_text_from_pdf(file_path)
-    chunks = chunk_text(extracted_text)
-    embeddings = create_embeddings(chunks)
+    chunks = list(chunk_text(extracted_text))
 
-    document_id = store_document_chunks(
-        chunks=chunks,
-        embeddings=embeddings,
-        filename=file.filename,
-    )
+    BATCH_SIZE = 50
+
+    document_id = str(uuid4())
+
+    total_embeddings = 0
+    embedding_dimensions = 0
+
+    for start in range(0, len(chunks), BATCH_SIZE):
+        batch = chunks[start:start + BATCH_SIZE]
+
+        embeddings = list(create_embeddings(batch))
+
+        store_document_chunks(
+            chunks=batch,
+            embeddings=embeddings,
+            filename=file.filename,
+            document_id=document_id,
+        )
+
+        total_embeddings += len(embeddings)
+
+        if embeddings and embedding_dimensions == 0:
+            embedding_dimensions = len(embeddings[0])
 
     return {
         "message": "Document uploaded and processed successfully",
         "filename": file.filename,
-        "characters_extracted": len(extracted_text),
+        "characters_extracted": len(extracted_text) if extracted_text else 0,
         "chunks_created": len(chunks),
-        "embeddings_created": len(embeddings),
-        "embedding_dimensions": len(embeddings[0]) if embeddings else 0,
+        "embeddings_created": total_embeddings,
+        "embedding_dimensions": embedding_dimensions,
         "first_chunk_preview": chunks[0][:500] if chunks else "",
         "document_id": document_id,
     }
