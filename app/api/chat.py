@@ -1,3 +1,4 @@
+import traceback
 from app.services.chat_history import (
     get_chat_history,
     add_message,
@@ -79,8 +80,6 @@ def chat_with_document(request: ChatRequest):
     except HTTPException:
         raise
 
-    except Exception as error:
-        raise HTTPException(
-            status_code=500,
-            detail=str(error),
-        )
+    except Exception :
+       traceback.print_exc()
+       raise 
