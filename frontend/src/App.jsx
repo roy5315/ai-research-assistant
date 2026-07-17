@@ -117,8 +117,12 @@ function App() {
     <div className="app">
       <aside className="sidebar">
         <div className="brand">
-          <h1>Research AI</h1>
-          <p>Document Intelligence</p>
+          <div className="brand-logo">🧠</div>
+
+          <div>
+            <h1>ResearchAI</h1>
+            <p>Chat with your research papers using AI</p>
+          </div>
         </div>
 
         <div className="upload-section">
@@ -128,10 +132,7 @@ function App() {
             onChange={(event) => setFile(event.target.files[0])}
           />
 
-          <button
-            onClick={handleUpload}
-            disabled={!file || uploading}
-          >
+          <button onClick={handleUpload} disabled={!file || uploading}>
             {uploading ? "Processing..." : "Upload PDF"}
           </button>
         </div>
@@ -156,7 +157,7 @@ function App() {
                 className="document-select"
                 onClick={() => selectDocument(document)}
               >
-                <span>PDF</span>
+                <span>📄</span>
                 <p>{document.filename}</p>
               </button>
 
@@ -174,17 +175,19 @@ function App() {
       <main className="chat-container">
         {!selectedDocument ? (
           <div className="welcome">
-            <h2>AI Research Assistant</h2>
+            <h2>Welcome to ResearchAI</h2>
 
             <p>
-              Upload and select a research document to begin exploring it.
+              Upload a PDF research paper and ask natural language questions.
+              Retrieve accurate answers grounded in your document using
+              Retrieval-Augmented Generation (RAG).
             </p>
           </div>
         ) : (
           <>
             <header className="chat-header">
               <div>
-                <p>Research document</p>
+                <p>Currently chatting with</p>
                 <h2>{selectedDocument.filename}</h2>
               </div>
             </header>
@@ -192,26 +195,27 @@ function App() {
             <section className="messages">
               {messages.length === 0 && (
                 <div className="empty-chat">
-                  <h3>Ask your document anything</h3>
+                  <h3>Start a conversation</h3>
 
                   <p>
-                    Explore concepts, methods, results, and technical details.
+                    Try asking:
+                    <br />
+                    • Summarize this paper
+                    <br />
+                    • What methodology was used?
+                    <br />
+                    • What are the key findings?
                   </p>
                 </div>
               )}
 
               {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`message ${message.role}`}
-                >
+                <div key={index} className={`message ${message.role}`}>
                   <div className="message-role">
-                    {message.role === "user" ? "You" : "Research AI"}
+                    {message.role === "user" ? "You" : "ResearchAI"}
                   </div>
 
-                  <div className="message-content">
-                    {message.content}
-                  </div>
+                  <div className="message-content">{message.content}</div>
 
                   {message.sources?.length > 0 && (
                     <div className="sources">
@@ -230,10 +234,10 @@ function App() {
 
               {asking && (
                 <div className="message assistant">
-                  <div className="message-role">Research AI</div>
+                  <div className="message-role">ResearchAI</div>
 
                   <div className="message-content">
-                    Thinking...
+                    Generating answer...
                   </div>
                 </div>
               )}
