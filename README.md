@@ -1,5 +1,11 @@
 
 
+https://github.com/user-attachments/assets/301ebd93-d93e-4291-a413-8711d540116e
+
+
+
+
+
 # 🧠 ResearchAI
 
 > An AI-powered Research Paper Assistant built using Retrieval-Augmented Generation (RAG), FastAPI, React, Qdrant, and Groq.
