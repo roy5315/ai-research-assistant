@@ -125,103 +125,6 @@ ai-research-assistant/
 ├── README.md
 └── requirements.txt
 ```
-
----
-
-# 🚀 Getting Started
-
-## Clone Repository
-
-```bash
-git clone https://github.com/YOUR_USERNAME/ai-research-assistant.git
-
-cd ai-research-assistant
-```
-
----
-
-# Backend Setup
-
-```bash
-cd backend
-
-python -m venv venv
-```
-
-### Windows
-
-```bash
-venv\Scripts\activate
-```
-
-### macOS / Linux
-
-```bash
-source venv/bin/activate
-```
-
-Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-Start FastAPI
-
-```bash
-uvicorn app.main:app --reload
-```
-
----
-
-# Frontend Setup
-
-```bash
-cd frontend
-
-npm install
-
-npm run dev
-```
-
-Frontend
-
-```
-http://localhost:5173
-```
-
-Backend
-
-```
-http://localhost:8000
-```
----
-
-# 🔑 Environment Variables
-
-Create a `.env` file inside the **backend** directory.
-
-```env
-GROQ_API_KEY=your_groq_api_key
-
-QDRANT_URL=your_qdrant_url
-
-QDRANT_API_KEY=your_qdrant_api_key
-```
-
----
-
-# 📡 API Endpoints
-
-| Method | Endpoint | Description |
-|----------|----------------|-----------------------------|
-| GET | `/documents` | List uploaded documents |
-| POST | `/upload` | Upload a PDF |
-| POST | `/chat` | Chat with a document |
-| DELETE | `/documents/{id}` | Delete a document |
-
----
-
 # ⚠ Known Limitations
 
 The public demo is hosted on Render's free tier, which provides limited memory. Large PDF documents may exceed the available resources during embedding generation.
@@ -241,9 +144,6 @@ This project is licensed under the MIT License.
 **Krunal Deshmukh**
 
 AI Engineer | Artificial Intelligence & Data Science
-
-GitHub: https://github.com/roy5315
-
 LinkedIn: www.linkedin.com/in/krunaldeshmukh5
 
 ---
