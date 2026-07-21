@@ -39,8 +39,6 @@ Instead of relying solely on an LLM's pre-trained knowledge, the application ret
 - 💬 Interactive chat interface
 - 🗂 Multiple document support
 - 🚀 FastAPI backend
-- ⚛️ React + Vite frontend
-- ☁️ Deployed on Render & Vercel
 
 ---
 
